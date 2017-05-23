@@ -1,8 +1,8 @@
 package globalconf
 
 import (
-    "fmt"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/user"
@@ -15,9 +15,10 @@ import (
 const (
 	defaultConfigFileName = "config.ini"
 )
+
 type flagSet struct {
-    *flag.FlagSet
-    errorHandling flag.ErrorHandling
+	*flag.FlagSet
+	errorHandling flag.ErrorHandling
 }
 
 var flags map[string]*flagSet = make(map[string]*flagSet)
@@ -140,34 +141,34 @@ func (g *GlobalConf) Parse() {
 			val := getEnv(g.EnvPrefix, name, f.Name)
 			if val != "" {
 				if err := set.Set(f.Name, val); err != nil {
-                    switch set.errorHandling {
-                    case flag.ContinueOnError:
-                        return
-                    case flag.ExitOnError:
-                        fmt.Printf("failed to set %s\n%s\n", f.Name, err)
-                        os.Exit(2)
-                    case flag.PanicOnError:
-                        panic(err)
-                    }
-                }
-                return
+					switch set.errorHandling {
+					case flag.ContinueOnError:
+						return
+					case flag.ExitOnError:
+						fmt.Printf("failed to set %s\n%s\n", f.Name, err)
+						os.Exit(2)
+					case flag.PanicOnError:
+						panic(err)
+					}
+				}
+				return
 			}
 
 			val, found := g.dict.GetString(name, f.Name)
 			if found {
 				if err := set.Set(f.Name, val); err != nil {
-                    switch set.errorHandling {
-                    case flag.ContinueOnError:
-                        return
-                    case flag.ExitOnError:
-                        fmt.Printf("failed to set %s\n%s\n", f.Name, err)
-                        os.Exit(2)
-                    case flag.PanicOnError:
-                        panic(err)
-                    }
-                }
+					switch set.errorHandling {
+					case flag.ContinueOnError:
+						return
+					case flag.ExitOnError:
+						fmt.Printf("failed to set %s\n%s\n", f.Name, err)
+						os.Exit(2)
+					case flag.PanicOnError:
+						panic(err)
+					}
+				}
 			}
-            return
+			return
 		})
 	}
 }
@@ -193,6 +194,8 @@ func getEnv(envPrefix, flagSetName, flagName string) string {
 	}
 	flagName = strings.Replace(flagName, ".", "_", -1)
 	flagName = strings.Replace(flagName, "-", "_", -1)
+	flagSetName = strings.Replace(flagSetName, ".", "_", -1)
+	flagSetName = strings.Replace(flagSetName, "-", "_", -1)
 	envKey := strings.ToUpper(envPrefix + flagSetName + flagName)
 	return os.Getenv(envKey)
 }
@@ -201,5 +204,5 @@ func getEnv(envPrefix, flagSetName, flagName string) string {
 // before calling this function. flag.CommandLine is automatically
 // registered.
 func Register(flagSetName string, set *flag.FlagSet, errorHandling flag.ErrorHandling) {
-	flags[flagSetName] = &flagSet{set,  errorHandling}
+	flags[flagSetName] = &flagSet{set, errorHandling}
 }

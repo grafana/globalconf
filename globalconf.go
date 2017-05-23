@@ -1,6 +1,7 @@
 package globalconf
 
 import (
+    "fmt"
 	"flag"
 	"io/ioutil"
 	"os"
@@ -14,8 +15,12 @@ import (
 const (
 	defaultConfigFileName = "config.ini"
 )
+type flagSet struct {
+    *flag.FlagSet
+    errorHandling flag.ErrorHandling
+}
 
-var flags map[string]*flag.FlagSet = make(map[string]*flag.FlagSet)
+var flags map[string]*flagSet = make(map[string]*flagSet)
 
 // Represents a GlobalConf context.
 type GlobalConf struct {
@@ -33,7 +38,7 @@ type Options struct {
 // Options. The caller is responsible for creating any
 // referenced config files.
 func NewWithOptions(opts *Options) (g *GlobalConf, err error) {
-	Register("", flag.CommandLine)
+	Register("", flag.CommandLine, flag.ExitOnError)
 
 	var dict ini.Dict
 	if opts.Filename != "" {
@@ -134,14 +139,35 @@ func (g *GlobalConf) Parse() {
 
 			val := getEnv(g.EnvPrefix, name, f.Name)
 			if val != "" {
-				set.Set(f.Name, val)
-				return
+				if err := set.Set(f.Name, val); err != nil {
+                    switch set.errorHandling {
+                    case flag.ContinueOnError:
+                        return
+                    case flag.ExitOnError:
+                        fmt.Printf("failed to set %s\n%s\n", f.Name, err)
+                        os.Exit(2)
+                    case flag.PanicOnError:
+                        panic(err)
+                    }
+                }
+                return
 			}
 
 			val, found := g.dict.GetString(name, f.Name)
 			if found {
-				set.Set(f.Name, val)
+				if err := set.Set(f.Name, val); err != nil {
+                    switch set.errorHandling {
+                    case flag.ContinueOnError:
+                        return
+                    case flag.ExitOnError:
+                        fmt.Printf("failed to set %s\n%s\n", f.Name, err)
+                        os.Exit(2)
+                    case flag.PanicOnError:
+                        panic(err)
+                    }
+                }
 			}
+            return
 		})
 	}
 }
@@ -174,6 +200,6 @@ func getEnv(envPrefix, flagSetName, flagName string) string {
 // Registers a flag set to be parsed. Register all flag sets
 // before calling this function. flag.CommandLine is automatically
 // registered.
-func Register(flagSetName string, set *flag.FlagSet) {
-	flags[flagSetName] = set
+func Register(flagSetName string, set *flag.FlagSet, errorHandling flag.ErrorHandling) {
+	flags[flagSetName] = &flagSet{set,  errorHandling}
 }

@@ -1,13 +1,11 @@
 # globalconf
 
-[![Build Status](https://travis-ci.org/rakyll/globalconf.png?branch=master)](https://travis-ci.org/rakyll/globalconf)
-
 Effortlessly persist/retrieve flags of your Golang programs. If you need global configuration instead of requiring user always to set command line flags, you are looking at the right package. `globalconf` allows your users to not only provide flags, but config files and environment variables as well.
 
 ## Usage
 
 ~~~ go
-import "github.com/rakyll/globalconf"
+import "github.com/grafana/globalconf"
 ~~~
 
 ### Loading a config file
@@ -64,7 +62,7 @@ conf.ParseAll()
 Custom flagsets are supported, but required registration before parse is done. The default flagset `flag.CommandLine` is automatically registered.
 
 ~~~ go
-globalconf.Register("termopts", termOptsFlagSet)
+globalconf.Register("termopts", termOptsFlagSet, flag.ExitOnError)
 conf.ParseAll() // parses command line and all registered flag sets
 ~~~
 
@@ -128,8 +126,8 @@ conf.Delete("termopts", "color") // removes "color"s value from the custom flag 
 ~~~
 
 ## License
-
 Copyright 2014 Google Inc. All Rights Reserved.
+Copyright 2017 Grafana Labs. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -141,4 +139,4 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License. ![Analytics](https://ga-beacon.appspot.com/UA-46881978-1/globalconf?pixel)
+limitations under the License.

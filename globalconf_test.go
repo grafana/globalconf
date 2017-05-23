@@ -118,7 +118,7 @@ func TestParse_Custom(t *testing.T) {
 	flagD := custom.String("d", "dd", "")
 	flagE := custom.String("e", "ee", "")
 
-	Register(name, custom)
+	Register(name, custom, flag.ExitOnError)
 	parse(t, "./testdata/custom.ini", envTestPrefix)
 	if *flagB != 5.0 {
 		t.Errorf("flagB found %v, expected 5.0", *flagB)
@@ -139,7 +139,7 @@ func TestParse_CustomOverwrite(t *testing.T) {
 	custom := flag.NewFlagSet(name, flag.ExitOnError)
 	flagD := custom.String("d", "dd", "")
 
-	Register(name, custom)
+	Register(name, custom, flag.ExitOnError)
 	parse(t, "./testdata/custom.ini", "")
 	if *flagB != 6.0 {
 		t.Errorf("flagB found %v, expected 6.0", *flagB)
@@ -159,7 +159,7 @@ func TestParse_GlobalAndCustom(t *testing.T) {
 	custom := flag.NewFlagSet(name, flag.ExitOnError)
 	flagD := custom.String("d", "", "")
 
-	Register(name, custom)
+	Register(name, custom, flag.ExitOnError)
 	parse(t, "./testdata/globalandcustom.ini", "")
 	if !*flagA {
 		t.Errorf("flagA found %v, expected true", *flagA)
@@ -185,7 +185,7 @@ func TestParse_GlobalAndCustomOverwrite(t *testing.T) {
 	custom := flag.NewFlagSet(name, flag.ExitOnError)
 	flagD := custom.String("d", "", "")
 
-	Register(name, custom)
+	Register(name, custom, flag.ExitOnError)
 	parse(t, "./testdata/globalandcustom.ini", "")
 	if !*flagA {
 		t.Errorf("flagA found %v, expected true", *flagA)

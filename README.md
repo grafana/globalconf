@@ -127,6 +127,7 @@ conf.Delete("termopts", "color") // removes "color"s value from the custom flag 
 
 ## License
 Copyright 2014 Google Inc. All Rights Reserved.
+
 Copyright 2017 Grafana Labs. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");

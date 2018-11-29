@@ -143,7 +143,7 @@ func (g *GlobalConf) Parse() {
 					case flag.ContinueOnError:
 						return
 					case flag.ExitOnError:
-						fmt.Printf("failed to set %s\n%s\n", f.Name, err)
+						fmt.Printf("failed to set flag, section: [%s], flag/setting: %s\nerror: %s\n", set.Name(), f.Name, err)
 						os.Exit(2)
 					case flag.PanicOnError:
 						panic(err)
@@ -159,7 +159,7 @@ func (g *GlobalConf) Parse() {
 					case flag.ContinueOnError:
 						return
 					case flag.ExitOnError:
-						fmt.Printf("failed to set %s\n%s\n", f.Name, err)
+						fmt.Printf("failed to set flag, section: [%s], flag/setting: %s\nerror: %s\n", set.Name(), f.Name, err)
 						os.Exit(2)
 					case flag.PanicOnError:
 						panic(err)
